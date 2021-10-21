@@ -1,6 +1,6 @@
 package com.paytm.pgplus.crypto.controller;
 
-import com.paytm.pgplus.crypto.entity.BlockChain;
+import com.paytm.pgplus.crypto.blockchain.BlockChain;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
