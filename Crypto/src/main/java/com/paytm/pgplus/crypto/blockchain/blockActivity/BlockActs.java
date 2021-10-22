@@ -4,6 +4,7 @@ import com.paytm.pgplus.crypto.Config;
 import com.paytm.pgplus.crypto.blockchain.Block;
 import com.paytm.pgplus.crypto.blockchain.DataBlock;
 import com.paytm.pgplus.crypto.util.CryptoHash;
+import com.paytm.pgplus.crypto.util.HexToBinary;
 import java.sql.Timestamp;
 
 public class BlockActs {
@@ -20,7 +21,7 @@ public class BlockActs {
         long nonce=0;
         String hash= CryptoHash.hashString(last_hash+timeStamp+String.valueOf(data)+difficulty+nonce);
 
-        while(!hash.substring(0,(int)difficulty).equalsIgnoreCase(getStringOfNChars((int)difficulty,'0'))){
+        while(!HexToBinary.hexToBinary(hash).substring(0,(int)difficulty).equalsIgnoreCase(getStringOfNChars((int)difficulty,'0'))){
             nonce++;
             timeStamp=System.nanoTime();
             difficulty= (int) adjust_difficulty(last_block,timeStamp);
@@ -56,5 +57,35 @@ public class BlockActs {
         }
         return 1;
     }
+    public static boolean is_valid_block(Block last_block,Block block){
+//   """
+//        Validate block by enforcing the following rules:
+//          - the block must have the proper last_hash reference
+//          - the block must meet the proof of work requirement
+//          - the difficulty must only adjust by 1
+//          - the block hash must be a valid combination of the block fields
+//        """
+        boolean ans=true;
+        if(!block.getLast_hash().equals(last_block.getHash())){
+            ans=false;
+            new Throwable("last hash must be same");
+        }
+        if(!HexToBinary.hexToBinary(block.getHash()).substring(0,(int)block.getDifficulty()).equals(getStringOfNChars((int) block.getDifficulty(),'0'))){}
+
+        if(Math.abs(last_block.getDifficulty()-block.getDifficulty())>1){
+            ans=false;
+            new Throwable("difficulty diff must be one");
+
+        }
+
+        String reconstructedHash=CryptoHash.hashString(block.getLast_hash()+block.getTimeStamp()+String.valueOf(block.getData())+block.getDifficulty()+block.getNonce());
+        if(!reconstructedHash.equals(block.getHash())){
+            ans=false;
+            new Throwable("hash donot mathc");
+
+        }
+        return ans;
+    }
+
 
   }
