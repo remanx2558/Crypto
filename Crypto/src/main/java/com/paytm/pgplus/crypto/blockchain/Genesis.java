@@ -10,4 +10,8 @@ public class Genesis {
     public static final String GENESIS_BLOCK_HASH = "hash";
 
     public static final DataBlock GENESIS_BLOCK_DATABLOCK= null;
+    public static final int GENESIS_DIFFICULTY= 3;
+    public static final int GENESIS_NONCE= 3;
+
+
 }
