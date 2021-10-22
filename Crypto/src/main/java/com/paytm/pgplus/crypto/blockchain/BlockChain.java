@@ -2,18 +2,23 @@ package com.paytm.pgplus.crypto.blockchain;
 
 import com.paytm.pgplus.crypto.blockchain.blockActivity.BlockActs;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 
 @Data
+@Slf4j
+@Service
 public class BlockChain {
     //  Blockchain: a public ledger of transactions.
     //    Implemented as a list of blocks - data sets of transactions
     //
-    ArrayList<Block>chain;
+    private ArrayList<Block>chain;
     public BlockChain(){
         chain=new ArrayList<>();
     }
+
     public void add_block(DataBlock data){
         Block last_Block=(chain.size()>0)?chain.get(chain.size()-1):null;
 
@@ -40,4 +45,23 @@ public class BlockChain {
         }
         return true;
     }
+  public void  replace_chain(ArrayList<Block> InComingChain){
+//         Replace the local chain with the incoming one if the following applies:
+//          - The incoming chain is longer than the local one.
+//          - The incoming chain is formatted properly.
+//        """
+      if(chain.size()>InComingChain.size()){
+          new Throwable("incoming chain size must be larger");
+      }
+      try {
+          is_valid_chain(InComingChain);
+      }
+      catch (Exception e){
+          new Throwable("invalid chain is coming");
+
+      }
+      chain=InComingChain;
+  }
+
+
 }
