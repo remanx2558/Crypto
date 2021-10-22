@@ -9,8 +9,7 @@ import java.util.ArrayList;
 public class BlockChain {
     //  Blockchain: a public ledger of transactions.
     //    Implemented as a list of blocks - data sets of transactions
-
-
+    //
     ArrayList<Block>chain;
     public BlockChain(){
         chain=new ArrayList<>();
