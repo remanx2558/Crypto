@@ -6,7 +6,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
-public class CryptoHash {
+public class CryptoHash2 {
 
       //sha-256 encryption in byte format
       public static byte[] cryptoHash(long timeStamp, String lastHash, ArrayList<Integer>data, int difficulty, int nonce) throws NoSuchAlgorithmException {

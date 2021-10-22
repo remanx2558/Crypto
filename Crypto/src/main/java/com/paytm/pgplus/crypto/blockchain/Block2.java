@@ -13,8 +13,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import static com.paytm.pgplus.crypto.util.CryptoHash.cryptoHash;
-import static com.paytm.pgplus.crypto.util.CryptoHash.hexToString;
+import static com.paytm.pgplus.crypto.util.CryptoHash2.cryptoHash;
+import static com.paytm.pgplus.crypto.util.CryptoHash2.hexToString;
 import static com.paytm.pgplus.crypto.util.HexToBinary.hexToBinary;
 
 import com.paytm.pgplus.crypto.Config;
@@ -34,11 +34,11 @@ import com.paytm.pgplus.crypto.Config;
 @JsonPropertyOrder(alphabetic = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class Block {
+public class Block2 {
 
 
 
-    private static Logger logger = Logger.getLogger(Block.class.getName());
+    private static Logger logger = Logger.getLogger(Block2.class.getName());
 
 
 
@@ -52,10 +52,10 @@ public class Block {
 
 
 
-    public void toJson(Block block){
+    public void toJson(Block2 block2){
         ObjectMapper mapper = new ObjectMapper();
         try {
-            String json = mapper.writeValueAsString(block);
+            String json = mapper.writeValueAsString(block2);
             System.out.println("ResultingJSONstring = " + json);
             //System.out.println(json);
         } catch (JsonProcessingException e) {
@@ -63,24 +63,24 @@ public class Block {
         }
     }
 
-    public Block mineBlock(Block lastBlock, ArrayList<Integer> data) throws NoSuchAlgorithmException {
-        Block block = new Block();
-        block.timeStamp = System.nanoTime();
-        block.lastHash = lastBlock.hash;
-        block.difficulty = Block.adjust_difficulty(lastBlock, block.timeStamp);
-        block.nonce = 0;
+    public Block2 mineBlock(Block2 lastBlock2, ArrayList<Integer> data) throws NoSuchAlgorithmException {
+        Block2 block2 = new Block2();
+        block2.timeStamp = System.nanoTime();
+        block2.lastHash = lastBlock2.hash;
+        block2.difficulty = Block2.adjust_difficulty(lastBlock2, block2.timeStamp);
+        block2.nonce = 0;
 
-        block.hash = hexToString(cryptoHash(timeStamp, lastHash, data, difficulty, nonce));
+        block2.hash = hexToString(cryptoHash(timeStamp, lastHash, data, difficulty, nonce));
 
         //String difficultyTemp =
         while (hexToBinary(hash).substring(0, difficulty) != getString(difficulty)){
             nonce += 1;
             timeStamp = System.nanoTime();
-            difficulty = Block.adjust_difficulty(lastBlock, timeStamp);
+            difficulty = Block2.adjust_difficulty(lastBlock2, timeStamp);
             hash = hexToString(cryptoHash(timeStamp, lastHash, data, difficulty, nonce));
         }
 
-        return block;
+        return block2;
     }
 
     public String getString (int difficulty){
@@ -91,36 +91,36 @@ public class Block {
         return str.toString();
     }
 
-    public static int adjust_difficulty(Block lastBlock, long newTimeStamp){
-        if((newTimeStamp - lastBlock.timeStamp) < new Config().MINE_RATE){
-            return lastBlock.difficulty + 1;
+    public static int adjust_difficulty(Block2 lastBlock2, long newTimeStamp){
+        if((newTimeStamp - lastBlock2.timeStamp) < new Config().MINE_RATE){
+            return lastBlock2.difficulty + 1;
         }
-        if((lastBlock.difficulty - 1) > 0){
-            return lastBlock.difficulty - 1;
+        if((lastBlock2.difficulty - 1) > 0){
+            return lastBlock2.difficulty - 1;
         }
         return 1;
     }
 
-    public void isValidBlock(Block lastBlock, Block block) throws Exception {
-        if (block.lastHash != lastBlock.hash) throw
+    public void isValidBlock(Block2 lastBlock2, Block2 block2) throws Exception {
+        if (block2.lastHash != lastBlock2.hash) throw
                 new Exception("The block last_hash must be correct");
 
-        if (hexToBinary(block.hash).substring(0, block.difficulty) != getString(difficulty)) throw
+        if (hexToBinary(block2.hash).substring(0, block2.difficulty) != getString(difficulty)) throw
                 new Exception("The proof of work requirement was not met");
 
-        if ((Math.abs(lastBlock.difficulty - block.difficulty)) > 1) throw
+        if ((Math.abs(lastBlock2.difficulty - block2.difficulty)) > 1) throw
                 new Exception ("The block difficulty must only adjust by 1");
 
 
         String reconstructedHash = hexToString(cryptoHash(
-                block.timeStamp,
-                block.lastHash,
-                block.data,
-                block.nonce,
-                block.difficulty
+                block2.timeStamp,
+                block2.lastHash,
+                block2.data,
+                block2.nonce,
+                block2.difficulty
         ));
 
-        if (block.hash != reconstructedHash) throw
+        if (block2.hash != reconstructedHash) throw
             new Exception("The block hash must be correct");
     }
 
