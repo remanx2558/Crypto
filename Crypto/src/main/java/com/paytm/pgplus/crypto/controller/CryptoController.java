@@ -1,6 +1,7 @@
 package com.paytm.pgplus.crypto.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.paytm.pgplus.crypto.scripts.AverageBlockRate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.paytm.pgplus.crypto.blockchain.BlockChain;
@@ -35,6 +36,10 @@ public class CryptoController {
         lit.add(new ArrayList<Integer>());
         String str= CryptoHash.hashListObject(lit);
         System.out.println("hash for 1 +str+{} is : "+str);
+    }
+    @GetMapping("/average")
+    public void average() throws JsonProcessingException {
+        AverageBlockRate.average_Block_Rate();
     }
 
 }
