@@ -22,7 +22,7 @@ public class CryptoController {
         blockChain.add_block(new DataBlock("one"));
         blockChain.add_block(new DataBlock("two"));
 
-        System.out.println(blockChain.getChain().get(0)+" "+blockChain.getChain().get(1));
+      System.out.println(blockChain.getChain().get(0)+" "+blockChain.getChain().get(1));
 
 
     }
