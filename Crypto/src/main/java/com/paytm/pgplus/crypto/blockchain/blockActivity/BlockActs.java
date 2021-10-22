@@ -21,7 +21,7 @@ public class BlockActs {
         long nonce=0;
         String hash= CryptoHash.hashString(last_hash+timeStamp+String.valueOf(data)+difficulty+nonce);
 
-        while(!hash.substring(0,difficulty).equalsIgnoreCase(getStringOfNumber(difficulty,'0'))){
+        while(!hash.substring(0,difficulty).equalsIgnoreCase(getStringOfNChars(difficulty,'0'))){
             nonce++;
             timeStamp=String.valueOf(new Timestamp(System.currentTimeMillis()));
             hash=CryptoHash.hashString(last_hash+timeStamp+String.valueOf(data)+difficulty+nonce);
@@ -29,11 +29,19 @@ public class BlockActs {
 
         return new Block(timeStamp,last_hash,hash,data,difficulty,nonce);
     }
-    static public String getStringOfNumber(int n,char c){
+    static public String getStringOfNChars(int n, char c){
        StringBuilder str=new StringBuilder("");
        for(int i=0;i<n;i++){
            str.append(c+"");
        }
        return String.valueOf(str);
+    }
+    static public void adjust_difficulty(Block last_block,String new_timeStamp){
+       //   """
+        //        Calculate the adjusted difficulty according to the MINE_RATE.
+        //        Increase the difficulty for quickly mined blocks.
+        //        Decrease the difficulty for slowly mined blocks.
+        //        """
+
     }
   }
