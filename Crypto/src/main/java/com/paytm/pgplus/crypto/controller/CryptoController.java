@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,12 +25,13 @@ public class CryptoController {
     @Autowired
     private BlockChain blockChain;
 
-    @Autowired
-    private pubnubApp pubnubApp;
+//    @Autowired
+//    private pubnubApp pubnubApp;
 
     @GetMapping("/create")
     public void createBlockChain(){
         BlockChain blockChain=new BlockChain();
+        blockChain.setChain(new ArrayList<>());
         //blockChain.add_block(new DataBlock("one"));
         //blockChain.add_block(new DataBlock("two"));
 
@@ -66,9 +68,33 @@ return "welcome to block chain app";    }
     public Block mine() throws JsonProcessingException, JSONException, PubNubException {
         ArrayList<Transaction>list_tras=new ArrayList<>();
         blockChain.add_block(new DataBlock(list_tras));
+
         Block block=blockChain.getChain().get(blockChain.getChain().size()-1);
-        pubnubApp.broadcast_block(block);
+
+        //pubnubApp pubnubApp=new pubnubApp(blockChain);
+     //  pubnubApp.broadcast_block(block);
         return block;
     }
+    @GetMapping("/syn")
+    public ArrayList<Block> syncron(){
+        final String uri = "http://localhost:8081/blockChain";
+
+        ArrayList<Block>bb = new ArrayList<>();
+        RestTemplate restTemplate = new RestTemplate();
+        ArrayList<Block> result = restTemplate.getForObject(uri, bb.getClass());
+        try {
+            blockChain.replace_chain(result);
+            System.out.println("chain replaced success  size is "+blockChain.getChain().size());
+        }
+        catch (Exception e){
+            System.out.println("chain replaced failure");
+        }
+
+
+
+        System.out.println(result);
+        return result;
+    }
+
 
 }
