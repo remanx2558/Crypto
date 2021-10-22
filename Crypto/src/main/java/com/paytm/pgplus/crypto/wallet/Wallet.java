@@ -66,7 +66,8 @@ public class Wallet {
     public int calculateBalance(BlockChain blockChain, UUID address){
         int balance = new Config().STARTING_BALANCE;
         if (blockChain == null) return balance;
-        int n = blockChain.getSize();
+        //int n = blockChain.getSize();
+        int n = 4;
         for(Block block : blockChain.getChain()){
             for(Transaction transaction : block.getData().getData()){
                 if(transaction.getInput().get("address") == address.toString()){
