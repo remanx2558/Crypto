@@ -3,10 +3,8 @@ package com.paytm.pgplus.crypto.wallet;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.paytm.pgplus.crypto.Config;
-import io.swagger.models.auth.In;
 
 import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Logger;
 
 public class Transaction {
@@ -20,6 +18,38 @@ public class Transaction {
     private SenderWallet senderWallet;
     private String recipient;
 
+    public int getId() {
+        return id;
+    }
+
+    public int getAmount() {
+        return amount;
+    }
+
+    public void setAmount(int amount) {
+        this.amount = amount;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public HashMap<String, String> getInput() {
+        return input;
+    }
+
+    public void setInput(HashMap<String, String> input) {
+        this.input = input;
+    }
+
+    public HashMap<String, Integer> getOutput() {
+        return output;
+    }
+
+    public void setOutput(HashMap<String, Integer> output) {
+        this.output = output;
+    }
+
     public Transaction(int id, int amount, HashMap<String, Integer> output, HashMap<String, String> input, SenderWallet senderWallet, String recipient) {
         this.id = id;
         this.amount = amount;
@@ -29,7 +59,7 @@ public class Transaction {
         this.recipient = recipient;
     }
 
-    public Transaction() {
+    public Transaction(HashMap<String, String> MINING_REWARD_INPUT, HashMap<String, Integer> output) {
 
     }
 
@@ -92,29 +122,37 @@ public class Transaction {
         return transaction;
     }
 
-//    public void isValidTransaction(Transaction transaction) throws Exception {
-//
-//        if (transaction.input.equals(new Config().MINING_REWARD_INPUT)){
-//            if((transaction.output.values())!=new Config().MINING_REWARD)throw new Exception("Invalid mining reward");
-//        }
-//
-//        int output_total = sum(transaction.output);
-//
-//        if (Integer.valueOf(transaction.input.get("amount"))!=output_total) throw new Exception("Invalid transaction output value");
-//
-//        if(!(Wallet.verify(transaction.input.get("public_key"),transaction.output,transaction.input.get("signature")))) throw new Exception("Invalid signature");
-//     return;
-//    }
+    public void isValidTransaction(Transaction transaction) throws Exception {
 
-//    public int sum(HashMap<String, Integer> output){
-//        int ans = 0;
-//
-//        return ans;
-//    }
+        if (transaction.input == new Config().MINING_REWARD_INPUT){
+            if(!transaction.output.containsValue(new Config().MINING_REWARD)) throw
+                    new Exception("Invalid mining reward");
+        }
 
-//     public static Transaction rewardTransaction(){
-//        Transaction transaction = new Transaction();
-//
-//        return transaction;
-//     }
+        int output_total = sum(transaction.output);
+
+        if (Integer.valueOf(transaction.input.get("amount"))!=output_total) throw
+                new Exception("Invalid transaction output value");
+
+//        if(!(Wallet.verify(transaction.input.get("public_key"),transaction.output,transaction.input.get("signature"))))
+//            throw new Exception("Invalid signature");  //need understand and uncomment the code
+    }
+
+    private int sum(HashMap<String, Integer> output) {
+        int sum = 0;
+        for(int value : output.values()){
+            sum += output.get(value);
+        }
+        return  sum;
+    }
+
+     public static Transaction rewardTransaction(SenderWallet minorWallet){
+        //Transaction transaction = new Transaction();
+         HashMap<String,Integer> output = new HashMap<>();
+         output.put(String.valueOf(minorWallet.getAddress()), (new Config().MINING_REWARD));
+         Transaction transaction = new Transaction(new Config().MINING_REWARD_INPUT, output);
+
+         return transaction;
+     }
+
 }

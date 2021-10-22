@@ -8,11 +8,11 @@ public class Config {
     public final Long MILLISECONDS = 1000000L;
     public final Long SECONDS = 1000000000L;
     public final Long MINE_RATE = 4000000000L;
-    public final Long STARTING_BALANCE = 1000L;
-    public final Long MINING_REWARD = 50L;
-    public final HashMap<String,Long> MINING_REWARD_INPUT = new HashMap<>();
+    public final int STARTING_BALANCE = 1000;
+    public final int MINING_REWARD = 50;
+    public final HashMap<String,String> MINING_REWARD_INPUT = new HashMap<>();
 
     public Config() {
-        MINING_REWARD_INPUT.put("address",100L);
+        MINING_REWARD_INPUT.put("address", String.valueOf(100L));
     }
 }

@@ -6,6 +6,7 @@ import lombok.Data;
 import java.util.ArrayList;
 
 @Data
+
 public class BlockChain {
     //  Blockchain: a public ledger of transactions.
     //    Implemented as a list of blocks - data sets of transactions
@@ -14,6 +15,10 @@ public class BlockChain {
     ArrayList<Block>chain;
     public BlockChain(){
         chain=new ArrayList<>();
+    }
+    public int getSize(){
+        int size = chain.size();
+        return size;
     }
     public void add_block(DataBlock data){
         Block last_Block=(chain.size()>0)?chain.get(chain.size()-1):null;

@@ -19,8 +19,8 @@ public class CryptoController {
     @GetMapping("/create")
     public void createBlockChain(){
         BlockChain blockChain=new BlockChain();
-        blockChain.add_block(new DataBlock("one"));
-        blockChain.add_block(new DataBlock("two"));
+        //blockChain.add_block(new DataBlock("one"));
+        //blockChain.add_block(new DataBlock("two"));
 
       System.out.println(blockChain.getChain().get(0)+" "+blockChain.getChain().get(1));
 
