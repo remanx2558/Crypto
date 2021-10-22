@@ -19,15 +19,19 @@ public class Block {
    private String timeStamp;
   private   String last_hash;
   private   String hash;
+  private long nonce;
+  private long difficulty;
 
 
 
 
-    public Block(String timeStamp, String last_hash, String hash, DataBlock data){
+    public Block(String timeStamp, String last_hash, String hash, DataBlock data,long difficulty,long nonce){
         this.timeStamp=timeStamp;
         this.last_hash=last_hash;
         this.hash=hash;
         this.data=data;
+        this.difficulty=difficulty;
+        this.nonce=nonce;
 
        // System.out.println(String.valueOf(this));
     }

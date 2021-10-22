@@ -24,6 +24,7 @@ public class CryptoController {
 
       System.out.println(blockChain.getChain().get(0)+" "+blockChain.getChain().get(1));
 
+
     }
     @GetMapping("/hashCheck")
     public void hashCheck() throws JsonProcessingException {

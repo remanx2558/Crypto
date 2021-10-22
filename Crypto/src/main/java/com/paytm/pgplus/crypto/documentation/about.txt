@@ -1,3 +1,11 @@
   1.  //__repr__==reper method to show structure of object : not required
   2.can improve hash code : unique o/p for unique i/p: Hashing.sha256().hashString(String.valueOf(str), StandardCharsets.UTF_8).toString()
   3.can sort objects in hashListObject(arr):
+  4.Difficulty ==6 means that generated hash must have 6 zeros in front of it: so generate many hash for same string and then pick with 6 zeros in front
+  5.nonce ==difficulty: increase nonce value till it reaches difficulty while generating corresponding hash value a/c to current nonce
+  6. nonce goes 0..1..2 ... and goes on inceasing till a hash get generated which have same number of zeros as difficulty
+  7. hash of (Block Data+ nonce): keep adjusting nonce
+  8.sha256 gives data in hexadecimal---> convert in binary
+  9. other can prove the hash is valid if have: nonce+blockdata+algo used to convert(sha256)
+  10.Mining rate is more then decrease difficulty so that avg_rage of mining remain same and vice-versa
+

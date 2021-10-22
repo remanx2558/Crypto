@@ -8,5 +8,8 @@ public class GENESIS {
     public static final String GENESIS_BLOCK_LAST_HASH = "last_hash";
     public static final String GENESIS_BLOCK_HASH = "hash";
     public static final DataBlock GENESIS_BLOCK_DATABLOCK= null;
+    public static final long GENESIS_NONCE=3;
+    public static  final long GENESIS_DIFFICULTY=3;
+
 
 }
