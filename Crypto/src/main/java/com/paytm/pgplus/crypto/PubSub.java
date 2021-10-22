@@ -3,6 +3,8 @@ package com.paytm.pgplus.crypto;
 
 import com.paytm.pgplus.crypto.blockchain.BlockChain;
 import com.paytm.pgplus.crypto.wallet.TransactionPool;
+import com.pubnub.api.PNConfiguration;
+import com.pubnub.api.PubNub;
 
 
 class Listener{

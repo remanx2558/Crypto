@@ -3,13 +3,11 @@ package com.paytm.pgplus.crypto.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.paytm.pgplus.crypto.blockchain.Block;
 import com.paytm.pgplus.crypto.scripts.AverageBlockRate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.paytm.pgplus.crypto.wallet.Transaction;
 import com.paytm.pgplus.crypto.blockchain.BlockChain;
 import com.paytm.pgplus.crypto.blockchain.DataBlock;
 import com.paytm.pgplus.crypto.util.CryptoHash;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -57,5 +55,12 @@ public class CryptoController {
     @GetMapping("")
     public String welcome() throws JsonProcessingException {
 return "welcome to block chain app";    }
+
+    @GetMapping("/blockChain/mine")
+    public Block mine() throws JsonProcessingException {
+        ArrayList<Transaction>list_tras=new ArrayList<>();
+        blockChain.add_block(new DataBlock(list_tras));
+        return blockChain.getChain().get(blockChain.getChain().size()-1);
+    }
 
 }
