@@ -57,5 +57,35 @@ public class BlockActs {
         }
         return 1;
     }
+    public static boolean is_valid_block(Block last_block,Block block){
+//   """
+//        Validate block by enforcing the following rules:
+//          - the block must have the proper last_hash reference
+//          - the block must meet the proof of work requirement
+//          - the difficulty must only adjust by 1
+//          - the block hash must be a valid combination of the block fields
+//        """
+        boolean ans=true;
+        if(!block.getLast_hash().equals(last_block.getHash())){
+            ans=false;
+            new Throwable("last hash must be same");
+        }
+        if(!HexToBinary.hexToBinary(block.getHash()).substring(0,(int)block.getDifficulty()).equals(getStringOfNChars((int) block.getDifficulty(),'0'))){}
+
+        if(Math.abs(last_block.getDifficulty()-block.getDifficulty())>1){
+            ans=false;
+            new Throwable("difficulty diff must be one");
+
+        }
+
+        String reconstructedHash=CryptoHash.hashString(block.getLast_hash()+block.getTimeStamp()+String.valueOf(block.getData())+block.getDifficulty()+block.getNonce());
+        if(!reconstructedHash.equals(block.getHash())){
+            ans=false;
+            new Throwable("hash donot mathc");
+
+        }
+        return ans;
+    }
+
 
   }
