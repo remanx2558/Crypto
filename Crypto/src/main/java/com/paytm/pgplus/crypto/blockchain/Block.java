@@ -16,7 +16,7 @@ public class Block {
     //    Store transactions in a blockchain that supports a cryptocurrency.
 
    private DataBlock data;
-   private String timeStamp;
+   private long timeStamp;
   private   String last_hash;
   private   String hash;
   private long nonce;
@@ -25,7 +25,7 @@ public class Block {
 
 
 
-    public Block(String timeStamp, String last_hash, String hash, DataBlock data,long difficulty,long nonce){
+    public Block(long timeStamp, String last_hash, String hash, DataBlock data,long difficulty,long nonce){
         this.timeStamp=timeStamp;
         this.last_hash=last_hash;
         this.hash=hash;

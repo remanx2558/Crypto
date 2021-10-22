@@ -37,23 +37,23 @@ public class CryptoHash {
         return Hashing.sha256().hashString(String.valueOf(joined_data), StandardCharsets.UTF_8).toString();
     }
 
-      //sha-256 encryption in byte format
-      public static byte[] cryptoHash(String input) throws NoSuchAlgorithmException {
-          MessageDigest md = MessageDigest.getInstance("SHA-256");
-          return md.digest(input.getBytes(StandardCharsets.UTF_8));
-      }
+    //sha-256 encryption in byte format
+    public static byte[] cryptoHash(String input) throws NoSuchAlgorithmException {
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
+        return md.digest(input.getBytes(StandardCharsets.UTF_8));
+    }
 
-      //it is converting string in hex format
-      public static String hexToString(byte[] hash){
+    //it is converting string in hex format
+    public static String hexToString(byte[] hash){
 
-          BigInteger number = new BigInteger(1, hash);
-          StringBuilder hexString = new StringBuilder(number.toString(16));
+        BigInteger number = new BigInteger(1, hash);
+        StringBuilder hexString = new StringBuilder(number.toString(16));
 
-          while (hexString.length() < 32)
-          {
-              hexString.insert(0, '0');
-          }
-          return hexString.toString();
-      }
+        while (hexString.length() < 32)
+        {
+            hexString.insert(0, '0');
+        }
+        return hexString.toString();
+    }
 
 }
