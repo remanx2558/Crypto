@@ -16,7 +16,7 @@ public class AverageBlockRate {
         BlockChain blockChain=new BlockChain();
         for(int i=0;i<1000;i++){
             long starttime=System.nanoTime();
-            blockChain.add_block(new DataBlock(""+i));
+            //blockChain.add_block(new DataBlock(""+i));
             long endtime=System.nanoTime();
             long timetomine=(endtime-starttime)/ Config.SECONDS;
             times.add(timetomine);
