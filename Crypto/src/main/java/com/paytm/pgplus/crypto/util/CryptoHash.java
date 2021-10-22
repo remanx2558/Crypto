@@ -4,11 +4,13 @@ import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 
 public class CryptoHash {
 
       //sha-256 encryption in byte format
-      public static byte[] cryptoHash(String input) throws NoSuchAlgorithmException {
+      public static byte[] cryptoHash(long timeStamp, String lastHash, ArrayList<Integer>data, int difficulty, int nonce) throws NoSuchAlgorithmException {
+          String input = timeStamp + lastHash + data.toString() + difficulty + nonce;
           MessageDigest md = MessageDigest.getInstance("SHA-256");
           return md.digest(input.getBytes(StandardCharsets.UTF_8));
       }
