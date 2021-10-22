@@ -2,6 +2,8 @@ package com.paytm.pgplus.crypto.blockchain;
 
 import lombok.Data;
 
+import java.util.HashMap;
+
 @Data
 public class Block {
     //Block: a unit of storage.
@@ -11,11 +13,6 @@ public class Block {
    private String timeStamp;
   private   String last_hash;
   private   String hash;
-    public static final Long GENESIS_BLOCK_PROOF = 100L;
-    public static final String GENESIS_BLOCK_TIME_STAMP = "1";
-    public static final String GENESIS_BLOCK_LAST_HASH = "last_hash";
-    public static final String GENESIS_BLOCK_HASH = "hash";
-    public static final DataBlock GENESIS_BLOCK_DATABLOCK= new DataBlock("Genesis");
 
 
 
