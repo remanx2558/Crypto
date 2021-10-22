@@ -49,6 +49,8 @@ public class CryptoController {
     }
     @GetMapping("/blockChain")
     public ArrayList<Block> route_blockchain() throws JsonProcessingException {
+        blockChain.add_block(new DataBlock("one"));
+        blockChain.add_block(new DataBlock("two"));
         return blockChain.getChain();
     }
     @GetMapping("")
