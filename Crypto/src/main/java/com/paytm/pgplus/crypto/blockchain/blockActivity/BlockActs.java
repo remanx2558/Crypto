@@ -4,6 +4,7 @@ import com.paytm.pgplus.crypto.Config;
 import com.paytm.pgplus.crypto.blockchain.Block;
 import com.paytm.pgplus.crypto.blockchain.DataBlock;
 import com.paytm.pgplus.crypto.util.CryptoHash;
+import com.paytm.pgplus.crypto.util.HexToBinary;
 import java.sql.Timestamp;
 
 public class BlockActs {
@@ -20,7 +21,7 @@ public class BlockActs {
         long nonce=0;
         String hash= CryptoHash.hashString(last_hash+timeStamp+String.valueOf(data)+difficulty+nonce);
 
-        while(!hash.substring(0,(int)difficulty).equalsIgnoreCase(getStringOfNChars((int)difficulty,'0'))){
+        while(!HexToBinary.hexToBinary(hash).substring(0,(int)difficulty).equalsIgnoreCase(getStringOfNChars((int)difficulty,'0'))){
             nonce++;
             timeStamp=System.nanoTime();
             difficulty= (int) adjust_difficulty(last_block,timeStamp);
