@@ -4,10 +4,10 @@ import com.paytm.pgplus.crypto.Config;
 import com.paytm.pgplus.crypto.blockchain.Block;
 import com.paytm.pgplus.crypto.blockchain.BlockChain;
 import com.paytm.pgplus.crypto.blockchain.DataBlock;
+import com.paytm.pgplus.crypto.util.JsonHelper;
 
 import java.nio.charset.StandardCharsets;
 import java.security.*;
-import java.security.spec.KeySpec;
 import java.util.Base64;
 import java.util.UUID;
 
@@ -16,12 +16,27 @@ public class Wallet {
     private UUID address;
     private String privateKey = generatePrivateKey();
     private String publicKey = generatePublicKey();
+    private int balance;
+    private KeyPair pair;
 
 //    public void serializePublicKey(){
 //        publicKey = publicKey.getBytes(StandardCharsets.UTF_8)
 //    }
 
     public Wallet() throws NoSuchAlgorithmException, NoSuchProviderException {
+        KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance("DSA");
+        keyPairGen.initialize(2048);
+        KeyPair pair = keyPairGen.generateKeyPair();
+        PrivateKey privKey = pair.getPrivate();
+        PublicKey pubKey = pair.getPublic();
+        Base64.Encoder encoder = Base64.getEncoder();
+
+        ////////////////////////
+        privateKey=encoder.encodeToString(privKey.getEncoded());
+        publicKey=encoder.encodeToString(pubKey.getEncoded());
+        balance=Config.STARTING_BALANCE;
+        address=UUID.randomUUID();
+
     }
 
 
@@ -59,7 +74,13 @@ public class Wallet {
         return encoder.encodeToString(publicKey.getEncoded());
     }
 
-    public void sign(DataBlock data){
+    public String sign(DataBlock data) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
+        Signature sign = Signature.getInstance("SHA256withDSA");
+        sign.initSign(pair.getPrivate());
+        byte[] bytes= JsonHelper.dataBlockTojsonString(data).getBytes(StandardCharsets.UTF_8);
+        sign.update(bytes);
+        byte []signature=sign.sign();
+        return signature.toString();
 
     }
 
@@ -79,8 +100,17 @@ public class Wallet {
         return balance;
     }
 
-    public void verify(String publicKey, DataBlock data, String signature){
-
+    public void verify(String publicKey, DataBlock data, String signature) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
+        Signature sign = Signature.getInstance("SHA256withDSA");
+        sign.initVerify(pair.getPublic());
+        byte[] bytes= JsonHelper.dataBlockTojsonString(data).getBytes(StandardCharsets.UTF_8);
+        sign.update(bytes);
+        boolean bool = sign.verify(signature.getBytes(StandardCharsets.UTF_8));
+        if(bool) {
+            System.out.println("Signature verified");
+        } else {
+            System.out.println("Signature failed");
+        }
     }
 
 //    public void serializePublicKey(){

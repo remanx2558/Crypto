@@ -85,15 +85,15 @@ return "welcome to block chain app";    }
         try {
             blockChain.replace_chain(result);
             System.out.println("chain replaced success  size is "+blockChain.getChain().size());
+            return bb;
         }
         catch (Exception e){
             System.out.println("chain replaced failure");
         }
+        System.out.println(result+"FUN YOU");
+        return bb;
 
 
-
-        System.out.println(result);
-        return result;
     }
 
 
