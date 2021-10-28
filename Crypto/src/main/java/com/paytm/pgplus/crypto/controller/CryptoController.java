@@ -25,9 +25,13 @@ public class CryptoController {
     @Autowired
     private BlockChain blockChain;
 
-//    @Autowired
-//    private pubnubApp pubnubApp;
+    @Autowired
+    private pubnubApp pubnubApp;
 
+    @GetMapping("/")
+    public String welcome(){
+        return "welcome crypto app";
+    }
     @GetMapping("/create")
     public void createBlockChain(){
         BlockChain blockChain=new BlockChain();
@@ -60,9 +64,7 @@ public class CryptoController {
 //        blockChain.add_block(new DataBlock("two"));
         return blockChain.getChain();
     }
-    @GetMapping("")
-    public String welcome() throws JsonProcessingException {
-return "welcome to block chain app";    }
+
 
     @GetMapping("/blockChain/mine")
     public Block mine() throws JsonProcessingException, JSONException, PubNubException {
@@ -71,8 +73,8 @@ return "welcome to block chain app";    }
 
         Block block=blockChain.getChain().get(blockChain.getChain().size()-1);
 
-        //pubnubApp pubnubApp=new pubnubApp(blockChain);
-     //  pubnubApp.broadcast_block(block);
+        pubnubApp pubnubApp=new pubnubApp(blockChain);
+       pubnubApp.broadcast_block(block);
         return block;
     }
     @GetMapping("/syn")

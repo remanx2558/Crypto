@@ -136,18 +136,6 @@
             <scope>compile</scope>
         </dependency>
 
-        <!--        <dependency>-->
-<!--            <groupId>com.paytm.pgplus</groupId>-->
-<!--            <artifactId>httpclient</artifactId>-->
-<!--            <version>42.1.2-SNAPSHOT</version>-->
-<!--            <scope>compile</scope>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>com.paytm.pgplus</groupId>-->
-<!--            <artifactId>facade</artifactId>-->
-<!--            <version>42.1.2-SNAPSHOT</version>-->
-<!--            <scope>compile</scope>-->
-<!--        </dependency>-->
 
     </dependencies>
 

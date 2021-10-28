@@ -31,26 +31,36 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
+
+import static com.paytm.pgplus.crypto.Config.PUBLIC_KEY_PUBNUB;
+import static com.paytm.pgplus.crypto.Config.SUBSCRIBE_KEY_PUBNUB;
+
 @Service
 public class pubnubApp {
-    //  Handles the publish/subscribe layer of the application.
-    //    Provides communication between the nodes of the blockchain network.
+    /*DOCUMENTATION:
+       Handles the publish/subscribe layer of the application.
+       Provides communication between the nodes of the blockchain network.*/
 
-    static public PubNub pubnub;
+    //PUB NUB object not of class
+    static  public PubNub pubnub;
     //channel name
     static final String channelName = "TestChannel";
     static final String Block_Channel = "block_channel";
+    BlockChain blockChain;
 
-    public pubnubApp(BlockChain blockChain){
-        String publicKey="pub-c-2e0eaf2c-c906-429b-a182-e35dd19051d2";
-        String subscribeKey="sub-c-25eb0ef4-2d94-11ec-9ccf-0aac42b27a06";
+    //@PostConstruct guarantees that this initialize() method will be invoked only once in the bean lifecycle
+    @PostConstruct
+    public void initialize() {
+        blockChain=new BlockChain();
+        String publicKey=PUBLIC_KEY_PUBNUB;
+        String subscribeKey=SUBSCRIBE_KEY_PUBNUB;
         PNConfiguration pnConfiguration = new PNConfiguration();
         pnConfiguration.setSubscribeKey(subscribeKey);
         pnConfiguration.setPublishKey(publicKey);
         //pnConfiguration.setUuid("myUniqueUUID");
         ///pubnub server take 1 argument configuration
         pubnub = new PubNub(pnConfiguration);
-
         System.out.println("Setting pubsnb.............: " );
         SubscribeCallback listner=new SubscribeCallback() {
 
@@ -137,6 +147,15 @@ public class pubnubApp {
                 .execute();
 
         pubnub.addListener(listner);
+
+    }
+
+
+
+
+
+    public pubnubApp(BlockChain blockChain){
+        this.blockChain=blockChain;
     }
 
     public static void publish(JsonObject messagePass) throws PubNubException {

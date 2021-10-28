@@ -8,4 +8,13 @@
   8.sha256 gives data in hexadecimal---> convert in binary
   9. other can prove the hash is valid if have: nonce+blockdata+algo used to convert(sha256)
   10.Mining rate is more then decrease difficulty so that avg_rage of mining remain same and vice-versa
-
+  11. In PUB-sub : Publisher publish message on a channel and Subscriber listen to a channel both in a network:
+  12. Pubsub network reduces the overhead of keeping track of sockets addresses:In this implementation real time socket connections are open between servers and each server has to maintain a list of all Piers.
+  13.It has made a real time socket connection with whenever a message broadcast needs to occur between all the peers.
+  14.No need to send a direct message to every single peer that has kept track of in the list.
+  15.This is a huge amount of work but if this network is sending the same message to all the sockets it doesn't need a targeting messaging capability that is this powerful.
+  16.When the network just needs to broadcast something to all the nodes in general :src/main/resources/PubSub Tech.png
+  17.Create a Channel called "Block" which is connection of all blockchain nodes
+  18.When an individual block chain in the network gets new data in its local chain list it will then publish the block data in the channel
+  19.This allows the other nodes to receive that information since they're all subscribed to the same block channel.
+  20.Therefore they'll pick up that message of the new block that hit the block and update their own local blocking instances.
