@@ -3,7 +3,12 @@ package com.paytm.pgplus.crypto.blockchain;
 import com.paytm.pgplus.crypto.blockchain.blockActivity.BlockActs;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 
@@ -14,9 +19,14 @@ public class BlockChain {
     //  Blockchain: a public ledger of transactions.
     //    Implemented as a list of blocks - data sets of transactions
     //
+
+    @Autowired
+    private ServerProperties serverProperties;
+
     private ArrayList<Block>chain;
     public BlockChain(){
         chain=new ArrayList<>();
+
     }
 
     public void add_block(DataBlock data){

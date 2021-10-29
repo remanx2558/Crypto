@@ -18,3 +18,14 @@
   18.When an individual block chain in the network gets new data in its local chain list it will then publish the block data in the channel
   19.This allows the other nodes to receive that information since they're all subscribed to the same block channel.
   20.Therefore they'll pick up that message of the new block that hit the block and update their own local blocking instances.
+  21. make differnt instances of intellij to test blockchain pubsub : Run --->Run configuration --> Add application --> Add {MainClass: Main class of application which is App.java, EnvironmentVariable:server.port(key)===8004(value) }
+
+  ///************************Problem 1: server Instancces are created which cannot interact with each other :Till lecture 63 *************************************
+
+  22. private key allows the individual to generate unique digital signatures for their transactions.
+  23.Blockchain ----> Block -----> Transaction
+  24.Input1: Initial (datails+Balance+etc) ::::::::::::::;Output1:transfered Amount and datails:::::::::OutPut2:Remaining Amount Datails after sending
+  24.Therefore every individual through their wallet can calculate their balance by looking at the history of transactions in the blocking
+  25.Public verify hash and it fails if :1)hash tempered after encryption or 2) used false private key to encrypt data
+
+  68....

@@ -11,22 +11,78 @@ import com.paytm.pgplus.crypto.util.CryptoHash;
 import com.pubnub.api.PubNubException;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
+import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
 @RestController()
 @RequestMapping("/")
 public class CryptoController {
+
+
+
+
+    @Autowired
+    private Environment env;
+
     @Autowired
     private BlockChain blockChain;
 
     @Autowired
     private pubnubApp pubnubApp;
+//    @PostConstruct
+//    public void initialize() {
+//        String port=env.getProperty("server.port");
+//        System.out.println("port is "+port);
+//        final String uri = "http://localhost:"+port+"/blockChain";
+//        System.out.println("url is "+uri);
+//
+//        //bb is just to get class from ArrayList<Block>bb
+//        ArrayList<Block>bb = new ArrayList<>();
+//        RestTemplate restTemplate = new RestTemplate();
+//        ArrayList<Block> result = restTemplate.getForObject(uri, bb.getClass());
+//        try {
+//            blockChain.replace_chain(result);
+//            System.out.println("chain replaced success  size is "+blockChain.getChain().size());
+//
+//        }
+//        catch (Exception e){
+//            System.out.println("chain replaced failure");
+//        }
+//
+//    }
+@EventListener(ApplicationReadyEvent.class)
+public void doSomethingAfterStartup() {
+        String port=env.getProperty("server.port");
+        System.out.println("port is "+port);
+        final String uri = "http://localhost:"+port+"/blockChain";
+        System.out.println("url is "+uri);
+
+        //bb is just to get class from ArrayList<Block>bb
+        ArrayList<Block>bb = new ArrayList<>();
+        RestTemplate restTemplate = new RestTemplate();
+        ArrayList<Block> result = restTemplate.getForObject(uri, bb.getClass());
+        try {
+            blockChain.replace_chain(result);
+            System.out.println("chain replaced success  size is "+blockChain.getChain().size());
+
+        }
+        catch (Exception e){
+            System.out.println("chain replaced failure");
+        }
+        }
+
+
+    public CryptoController() {
+    }
 
     @GetMapping("/")
     public String welcome(){
@@ -66,6 +122,7 @@ public class CryptoController {
     }
 
 
+    //Mine a Block add it to local BlockChain ...then broadcast both block and blockChain
     @GetMapping("/blockChain/mine")
     public Block mine() throws JsonProcessingException, JSONException, PubNubException {
         ArrayList<Transaction>list_tras=new ArrayList<>();
@@ -74,13 +131,18 @@ public class CryptoController {
         Block block=blockChain.getChain().get(blockChain.getChain().size()-1);
 
         pubnubApp pubnubApp=new pubnubApp(blockChain);
+        //acting as Publisher
        pubnubApp.broadcast_block(block);
         return block;
     }
     @GetMapping("/syn")
     public ArrayList<Block> syncron(){
-        final String uri = "http://localhost:8081/blockChain";
+        String port=env.getProperty("server.port");
+        System.out.println("port is "+port);
+        final String uri = "http://localhost:"+port+"/blockChain";
+        System.out.println("url is "+uri);
 
+        //bb is just to get class from ArrayList<Block>bb
         ArrayList<Block>bb = new ArrayList<>();
         RestTemplate restTemplate = new RestTemplate();
         ArrayList<Block> result = restTemplate.getForObject(uri, bb.getClass());

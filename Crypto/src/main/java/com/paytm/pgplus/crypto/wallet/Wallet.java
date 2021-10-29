@@ -1,16 +1,21 @@
 package com.paytm.pgplus.crypto.wallet;
 
+import com.google.gson.Gson;
 import com.paytm.pgplus.crypto.Config;
 import com.paytm.pgplus.crypto.blockchain.Block;
 import com.paytm.pgplus.crypto.blockchain.BlockChain;
 import com.paytm.pgplus.crypto.blockchain.DataBlock;
 import com.paytm.pgplus.crypto.util.JsonHelper;
+import lombok.Data;
 
 import java.nio.charset.StandardCharsets;
 import java.security.*;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 import java.util.UUID;
 
+@Data
 public class Wallet {
     private BlockChain blockChain;
     private UUID address;
@@ -26,7 +31,7 @@ public class Wallet {
     public Wallet() throws NoSuchAlgorithmException, NoSuchProviderException {
         KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance("DSA");
         keyPairGen.initialize(2048);
-        KeyPair pair = keyPairGen.generateKeyPair();
+         pair = keyPairGen.generateKeyPair();
         PrivateKey privKey = pair.getPrivate();
         PublicKey pubKey = pair.getPublic();
         Base64.Encoder encoder = Base64.getEncoder();
@@ -74,10 +79,12 @@ public class Wallet {
         return encoder.encodeToString(publicKey.getEncoded());
     }
 
-    public String sign(DataBlock data) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
+    public String sign(Object data) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
         Signature sign = Signature.getInstance("SHA256withDSA");
         sign.initSign(pair.getPrivate());
-        byte[] bytes= JsonHelper.dataBlockTojsonString(data).getBytes(StandardCharsets.UTF_8);
+        String jsonData=new Gson().toJson(data);
+        byte[] bytes= jsonData.getBytes(StandardCharsets.UTF_8);
+                //JsonHelper.dataBlockTojsonString(data).getBytes(StandardCharsets.UTF_8);
         sign.update(bytes);
         byte []signature=sign.sign();
         return signature.toString();
@@ -100,10 +107,22 @@ public class Wallet {
         return balance;
     }
 
-    public void verify(String publicKey, DataBlock data, String signature) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
+    public static boolean verifySign(String publicKey, Object data, String signature) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException, InvalidKeySpecException {
         Signature sign = Signature.getInstance("SHA256withDSA");
-        sign.initVerify(pair.getPublic());
-        byte[] bytes= JsonHelper.dataBlockTojsonString(data).getBytes(StandardCharsets.UTF_8);
+
+        //And to decode the private use PKCS8EncodedKeySpec
+        Base64.Decoder decoder = Base64.getDecoder();
+        decoder.decode(publicKey);
+        byte[] publicBytes = decoder.decode(publicKey);//or use Base64.decodeBase64(publicKey)
+        X509EncodedKeySpec keySpec = new X509EncodedKeySpec(publicBytes);
+        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+        PublicKey pubKey = keyFactory.generatePublic(keySpec);
+        ///////
+        sign.initVerify(pubKey);
+        String jsonData=new Gson().toJson(data);
+
+        byte[] bytes= jsonData.getBytes(StandardCharsets.UTF_8);
+                //JsonHelper.dataBlockTojsonString(data).getBytes(StandardCharsets.UTF_8);
         sign.update(bytes);
         boolean bool = sign.verify(signature.getBytes(StandardCharsets.UTF_8));
         if(bool) {
@@ -111,6 +130,7 @@ public class Wallet {
         } else {
             System.out.println("Signature failed");
         }
+        return bool;
     }
 
 //    public void serializePublicKey(){

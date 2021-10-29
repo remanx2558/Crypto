@@ -33,8 +33,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 
-import static com.paytm.pgplus.crypto.Config.PUBLIC_KEY_PUBNUB;
-import static com.paytm.pgplus.crypto.Config.SUBSCRIBE_KEY_PUBNUB;
+import static com.paytm.pgplus.crypto.Config.*;
 
 @Service
 public class pubnubApp {
@@ -45,8 +44,7 @@ public class pubnubApp {
     //PUB NUB object not of class
     static  public PubNub pubnub;
     //channel name
-    static final String channelName = "TestChannel";
-    static final String Block_Channel = "block_channel";
+    static final String channelName = BLOCK_CHANNEL;
     BlockChain blockChain;
 
     //@PostConstruct guarantees that this initialize() method will be invoked only once in the bean lifecycle
@@ -86,20 +84,23 @@ public class pubnubApp {
             @SneakyThrows
             @Override
             public void message( PubNub pubNub,  PNMessageResult message) {
+                //this is kind of listner of listner : this code will be implemeted when you receive a message via channel
+                //message==new block mined : so that block need to be validated so just see that new broadcasted block can be added in our local chain
+
                 // Handle new message stored in message.message
                 // message.getChannel()
                 // message.getSubscription():Message has been received on channel stored in
 
 
                 JsonElement receivedMessageObject = message.getMessage();
-                System.out.println("Received message: " + receivedMessageObject.toString());
+                System.out.println("Received message: " + message.getChannel()+" is "+receivedMessageObject.toString());
                 if(message.getChannel().equals(channelName)){
                     Block block=JsonHelper.jsonObjectToBlock(message.getMessage());
                     ArrayList<Block>potential_chain=new ArrayList<>( blockChain.getChain());
                     potential_chain.add(block);
 
                     try {
-                        blockChain.replace_chain(potential_chain);
+                        blockChain.replace_chain(potential_chain);//this line might throw exception
                         System.out.println("chain replaced success  size is "+blockChain.getChain().size());
 
                     }

@@ -14,4 +14,5 @@ public class SenderWallet {
     private UUID address = UUID.randomUUID();
     private String publicKey;
     private String signature;
+
 }
