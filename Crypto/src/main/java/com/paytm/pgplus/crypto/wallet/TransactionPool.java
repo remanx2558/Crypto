@@ -2,33 +2,30 @@ package com.paytm.pgplus.crypto.wallet;
 
 import com.paytm.pgplus.crypto.blockchain.Block;
 import com.paytm.pgplus.crypto.blockchain.BlockChain;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.Map;
 import java.util.logging.Logger;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Service
 public class TransactionPool {
     private static Logger LOGGER = Logger.getLogger(TransactionPool.class.getName());
 
-    private HashMap<Integer, Transaction> transactionMap;
-
-    public HashMap<Integer, Transaction> getTransactionMap() {
-        return transactionMap;
+    //Transaction Id: Transactions
+    private HashMap<Integer, Transaction> transactionMap=new HashMap<>();
+    public void TransactionPool(){
+        transactionMap=new HashMap<>();
     }
 
-    public void setTransactionMap(HashMap<Integer, Transaction> transactionMap) {
-        this.transactionMap = transactionMap;
-    }
-
-    public TransactionPool(HashMap<Integer, Transaction> transactionMap) {
-        this.transactionMap = transactionMap;
-    }
-
-    public TransactionPool() {
-        transactionMap = new HashMap<>();
-    }
 
     public void setTransaction(Transaction transaction){
         transactionMap.put(transaction.getId(), transaction);

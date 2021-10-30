@@ -1,17 +1,17 @@
 package com.paytm.pgplus.crypto.pubnub;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.paytm.pgplus.crypto.blockchain.Block;
 import com.paytm.pgplus.crypto.blockchain.BlockChain;
 import com.paytm.pgplus.crypto.util.JsonHelper;
+import com.paytm.pgplus.crypto.wallet.Transaction;
+import com.paytm.pgplus.crypto.wallet.TransactionPool;
 import com.pubnub.api.PNConfiguration;
 import com.pubnub.api.PubNub;
 import com.pubnub.api.PubNubException;
@@ -33,7 +33,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 
-import static com.paytm.pgplus.crypto.Config.*;
+import static com.paytm.pgplus.crypto.constants.Config.*;
 
 @Service
 public class pubnubApp {
@@ -44,13 +44,19 @@ public class pubnubApp {
     //PUB NUB object not of class
     static  public PubNub pubnub;
     //channel name
-    static final String channelName = BLOCK_CHANNEL;
+//    static final String channelNameBlock = BLOCK_CHANNEL;
+//    static final String channelNameTransaction = TRANSACTION_CHANNEL;
+    String[] channelsArr={BLOCK_CHANNEL,TRANSACTION_CHANNEL};
+
     BlockChain blockChain;
+    TransactionPool transactionPool;
 
     //@PostConstruct guarantees that this initialize() method will be invoked only once in the bean lifecycle
     @PostConstruct
     public void initialize() {
         blockChain=new BlockChain();
+        transactionPool=new TransactionPool();
+
         String publicKey=PUBLIC_KEY_PUBNUB;
         String subscribeKey=SUBSCRIBE_KEY_PUBNUB;
         PNConfiguration pnConfiguration = new PNConfiguration();
@@ -94,7 +100,7 @@ public class pubnubApp {
 
                 JsonElement receivedMessageObject = message.getMessage();
                 System.out.println("Received message: " + message.getChannel()+" is "+receivedMessageObject.toString());
-                if(message.getChannel().equals(channelName)){
+                if(message.getChannel().equals(BLOCK_CHANNEL)){
                     Block block=JsonHelper.jsonObjectToBlock(message.getMessage());
                     ArrayList<Block>potential_chain=new ArrayList<>( blockChain.getChain());
                     potential_chain.add(block);
@@ -108,6 +114,12 @@ public class pubnubApp {
                         System.out.println("chain replaced failure");
 
                     }
+                }
+                else if(message.getChannel().equals(TRANSACTION_CHANNEL)){
+                    Transaction transaction=JsonHelper.jsonObjectToTransaction(message.getMessage());
+                    transactionPool.setTransaction(transaction);
+                    System.out.println("trancsaction added in local pool "+transaction);
+
                 }
             }
 
@@ -143,9 +155,11 @@ public class pubnubApp {
         };
 
         //actual running of pubsub takes channel list and then execute it
-        pubnub.subscribe()
-                .channels(Collections.singletonList(channelName))
-                .execute();
+//        pubnub.subscribe()
+//                .channels(Collections.singletonList(channelNameBlock))
+//                .execute();
+        pubnub.subscribe().channels(Arrays.asList(channelsArr)).execute();
+
 
         pubnub.addListener(listner);
 
@@ -155,8 +169,9 @@ public class pubnubApp {
 
 
 
-    public pubnubApp(BlockChain blockChain){
+    public pubnubApp(BlockChain blockChain,TransactionPool transactionPool){
         this.blockChain=blockChain;
+        this.transactionPool=transactionPool;
     }
 
     public static void publish(JsonObject messagePass) throws PubNubException {
@@ -166,11 +181,17 @@ public class pubnubApp {
         //syc : send message
         // it will sleep the main thread for 1 sec
         // ,each time the for loop runs
-        pubnub.publish().channel(channelName).message(messagePass).sync();
+        pubnub.publish().channel(BLOCK_CHANNEL).message(messagePass).sync();
+
     }
     public void broadcast_block(Block block) throws JsonProcessingException, JSONException, PubNubException {
         JSONObject mJSONObject = JsonHelper.blockTojsonObject(block);
-        pubnub.publish().channel(channelName).message(mJSONObject).sync();
+        pubnub.publish().channel(BLOCK_CHANNEL).message(mJSONObject).sync();
+
+    }
+    public void broadcast_transaction(Transaction transaction) throws JsonProcessingException, JSONException, PubNubException {
+        JSONObject mJSONObject = JsonHelper.ObjectTojsonObject(transaction);
+        pubnub.publish().channel(TRANSACTION_CHANNEL).message(mJSONObject).sync();
 
     }
 

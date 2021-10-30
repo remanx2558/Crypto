@@ -23,9 +23,9 @@ public class BlockChain {
     @Autowired
     private ServerProperties serverProperties;
 
-    private ArrayList<Block>chain;
+    private ArrayList<Block>chain=new ArrayList<>();
     public BlockChain(){
-        chain=new ArrayList<>();
+       // chain=new ArrayList<>();
 
     }
 

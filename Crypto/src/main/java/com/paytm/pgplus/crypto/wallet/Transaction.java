@@ -2,16 +2,20 @@ package com.paytm.pgplus.crypto.wallet;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.paytm.pgplus.crypto.Config;
+import com.paytm.pgplus.crypto.constants.Config;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
 
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.SignatureException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.HashMap;
+import java.util.Random;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -22,19 +26,29 @@ import java.util.logging.Logger;
 public class Transaction {
 
     private static Logger LOGGER = Logger.getLogger(Transaction.class.getName());
-
-    private int id;//convert to string 0-8 UUID.randomUUID()
+    private int id;//** not mendataory can be generated//convert to string 0-8 UUID.randomUUID()
     private int amount;
-    private HashMap<String,Integer> output;
-    private HashMap<String,String> input;
+    private HashMap<String,Integer> output;//** not mendataory can be generated
+    private HashMap<String,String> input;//** not mendataory can be generated
     private Wallet senderWallet;
     private String recipient;
 
     public Transaction(HashMap<String, String> MINING_REWARD_INPUT, HashMap<String, Integer> output) {
 
     }
+    public Transaction(Wallet senderWallet,String recipent,int amount) throws NoSuchAlgorithmException, SignatureException, InvalidKeyException, InvalidKeySpecException, NoSuchProviderException {
+        LOGGER.info("inside method");
+        this.senderWallet=senderWallet;
+        this.amount=amount;
+        this.recipient=recipent;
+        this.output=createOutput(senderWallet,recipient,amount);
+        this.input=createInput(senderWallet,this.output);
+        Random rand = new Random();
+        this.id= rand.nextInt(1000);
+                //Integer.parseInt(UUID.randomUUID().toString().substring(0,5));
+    }
 
-    public static HashMap<String ,Integer> createOutput(SenderWallet senderWallet, String recipient, int amount){
+    public static HashMap<String ,Integer> createOutput(Wallet senderWallet, String recipient, int amount){
         HashMap<String,Integer> output = new HashMap<>();
 
         try {
@@ -48,7 +62,7 @@ public class Transaction {
         return output;
    }
 
-   public static HashMap<String,String> createInput(Wallet senderWallet,HashMap<String,Integer> output) throws NoSuchAlgorithmException, SignatureException, InvalidKeyException {
+   public static HashMap<String,String> createInput(Wallet senderWallet,HashMap<String,Integer> output) throws NoSuchAlgorithmException, SignatureException, InvalidKeyException, InvalidKeySpecException, NoSuchProviderException {
 
         HashMap<String,String> input = new HashMap<>();
         input.put("timestamp",String.valueOf(System.nanoTime()));

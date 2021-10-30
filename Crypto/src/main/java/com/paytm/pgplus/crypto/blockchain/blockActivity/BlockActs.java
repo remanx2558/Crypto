@@ -1,11 +1,10 @@
 package com.paytm.pgplus.crypto.blockchain.blockActivity;
 
-import com.paytm.pgplus.crypto.Config;
+import com.paytm.pgplus.crypto.constants.Config;
 import com.paytm.pgplus.crypto.blockchain.Block;
 import com.paytm.pgplus.crypto.blockchain.DataBlock;
 import com.paytm.pgplus.crypto.util.CryptoHash;
 import com.paytm.pgplus.crypto.util.HexToBinary;
-import java.sql.Timestamp;
 
 public class BlockActs {
    static public Block mine_block(Block last_block, DataBlock data){

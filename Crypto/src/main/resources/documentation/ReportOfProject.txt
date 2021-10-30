@@ -28,4 +28,16 @@
   24.Therefore every individual through their wallet can calculate their balance by looking at the history of transactions in the blocking
   25.Public verify hash and it fails if :1)hash tempered after encryption or 2) used false private key to encrypt data
 
-  68....
+  ///************************Problem 2: lecture 78-77-79 is quite complex do that part again  *************************************
+
+
+  26.The transaction Pool transaction Pool is a data structure which will collect the transactions that are created by wallet in the network.
+  27.The main thing is that it needs support 3 behaviors:
+        1) it collects a unique set of transaction objects
+        2) it can update already existing stored transactions when a change has been resubmitted by a wallet
+        3) that it can rewrite multiple transactions meaning it can either replace a collection with an entirely new set or it can clear the pool of a handful or all of his transactions now.
+  28.every note in the network is going to have its own instance of the transaction pool like the blockChain
+  29.Everyone has their own running version transaction pool and the key is making sure that all transaction pools stay synchronized
+  30.when one node creates a new transaction( or updates an existing one). The transaction will have to be broadcasted to the entire network and based on its transaction I.D. the transaction will either be added to each transaction pool if it's new( or it will be updated in each pool accordingly If a transaction with that I.D. already exists in it)
+  41.ultimately the transaction pool is a necessary object because it enables miners to get an accurate list of recent transactions in order to include them within  a new block.
+  42.when to add a new block to the block chain a miner will use the transactions within the transaction pool as the data for a new block to mine.

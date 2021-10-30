@@ -1,6 +1,7 @@
 package com.paytm.pgplus.crypto.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.gson.Gson;
 import com.paytm.pgplus.crypto.blockchain.Block;
 import com.paytm.pgplus.crypto.pubnub.pubnubApp;
 import com.paytm.pgplus.crypto.scripts.AverageBlockRate;
@@ -8,18 +9,22 @@ import com.paytm.pgplus.crypto.wallet.Transaction;
 import com.paytm.pgplus.crypto.blockchain.BlockChain;
 import com.paytm.pgplus.crypto.blockchain.DataBlock;
 import com.paytm.pgplus.crypto.util.CryptoHash;
+import com.paytm.pgplus.crypto.wallet.TransactionPool;
+import com.paytm.pgplus.crypto.wallet.Wallet;
 import com.pubnub.api.PubNubException;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.env.Environment;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
-import javax.annotation.PostConstruct;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.SignatureException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +42,14 @@ public class CryptoController {
     private BlockChain blockChain;
 
     @Autowired
+    private TransactionPool transactionPool;
+
+    @Autowired
     private pubnubApp pubnubApp;
+
+    @Autowired
+    private Wallet wallet;
+
 //    @PostConstruct
 //    public void initialize() {
 //        String port=env.getProperty("server.port");
@@ -76,7 +88,7 @@ public void doSomethingAfterStartup() {
 
         }
         catch (Exception e){
-            System.out.println("chain replaced failure");
+            System.out.println("chain replaced failure as incoiming chain is smaller");
         }
         }
 
@@ -130,7 +142,7 @@ public void doSomethingAfterStartup() {
 
         Block block=blockChain.getChain().get(blockChain.getChain().size()-1);
 
-        pubnubApp pubnubApp=new pubnubApp(blockChain);
+        pubnubApp pubnubApp=new pubnubApp(blockChain,transactionPool);
         //acting as Publisher
        pubnubApp.broadcast_block(block);
         return block;
@@ -159,6 +171,22 @@ public void doSomethingAfterStartup() {
 
 
     }
+    @RequestMapping(value="/wallet/transaction/test", method = RequestMethod.POST)
+    public Transaction beach(@RequestBody(required = false) String recipent,  Integer amount) throws NoSuchAlgorithmException, SignatureException, InvalidKeyException, JSONException, JsonProcessingException, PubNubException, InvalidKeySpecException, NoSuchProviderException {
+Transaction transaction_data=new Transaction(wallet,"foo",12);
+        System.out.println("id "+transaction_data.getId());
+        System.out.println("amount"+transaction_data.getAmount());
+        System.out.println("output "+transaction_data.getOutput().toString());
+        System.out.println("inout "+transaction_data.getInput().toString());
+        System.out.println("wallet "+transaction_data.getSenderWallet().toString());
+
+        //just pubnub object few things do not change in it as @post used in pubnub
+        pubnubApp pubnubApp=new pubnubApp(blockChain,transactionPool);
+        pubnubApp.broadcast_transaction(transaction_data);
+        return transaction_data;
+
+       // return new Gson().toJson(transaction_data);
+        }
 
 
 }

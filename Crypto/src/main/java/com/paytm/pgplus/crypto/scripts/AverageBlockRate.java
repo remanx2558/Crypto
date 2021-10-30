@@ -1,8 +1,7 @@
 package com.paytm.pgplus.crypto.scripts;
 
-import com.paytm.pgplus.crypto.Config;
+import com.paytm.pgplus.crypto.constants.Config;
 import com.paytm.pgplus.crypto.blockchain.BlockChain;
-import com.paytm.pgplus.crypto.blockchain.DataBlock;
 
 import java.util.ArrayList;
 

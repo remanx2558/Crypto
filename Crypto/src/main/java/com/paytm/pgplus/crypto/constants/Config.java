@@ -1,4 +1,4 @@
-package com.paytm.pgplus.crypto;
+package com.paytm.pgplus.crypto.constants;
 
 import java.util.HashMap;
 
@@ -15,6 +15,12 @@ public class Config {
     public static final String PUBLIC_KEY_PUBNUB="pub-c-2e0eaf2c-c906-429b-a182-e35dd19051d2";
     public static final String SUBSCRIBE_KEY_PUBNUB="sub-c-25eb0ef4-2d94-11ec-9ccf-0aac42b27a06";
     public static final String BLOCK_CHANNEL="block_channel";
+    public static final String TRANSACTION_CHANNEL="transaction_channel";
+    public static final String PRIVATESTRING_KEY="private_key";
+    public static final String PUBLICSTRING_KEY="public_key";
+
+
+
 
     public Config() {
         MINING_REWARD_INPUT.put("address", String.valueOf(100L));

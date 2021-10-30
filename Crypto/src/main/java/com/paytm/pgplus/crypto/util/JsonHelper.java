@@ -6,6 +6,7 @@ import com.google.gson.JsonElement;
 import com.paytm.pgplus.crypto.blockchain.Block;
 import com.paytm.pgplus.crypto.blockchain.BlockChain;
 import com.paytm.pgplus.crypto.blockchain.DataBlock;
+import com.paytm.pgplus.crypto.wallet.Transaction;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -19,9 +20,19 @@ public class JsonHelper {
         JSONObject mJSONObject = new JSONObject(jsonInString);
         return mJSONObject;
     }
+    public static JSONObject ObjectTojsonObject(Object block) throws JSONException {
+        String jsonInString = new Gson().toJson(block);
+        JSONObject mJSONObject = new JSONObject(jsonInString);
+        return mJSONObject;
+    }
     public static Block jsonObjectToBlock(JsonElement object) throws JSONException {
         Block block=gson.fromJson(String.valueOf(object), Block.class);
         return block;
+
+    }
+    public static Transaction jsonObjectToTransaction(JsonElement object) throws JSONException {
+        Transaction transaction=gson.fromJson(String.valueOf(object), Transaction.class);
+        return transaction;
 
     }
     public static BlockChain jsonToBlockChain(String json_Chain){
@@ -30,5 +41,8 @@ public class JsonHelper {
     }
     public static String dataBlockTojsonString(DataBlock block){
         return new Gson().toJson(block);
+    }
+    public static String ObjectTojsonString(Object data){
+        return new Gson().toJson(data);
     }
 }
