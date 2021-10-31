@@ -6,6 +6,8 @@ import com.paytm.pgplus.crypto.blockchain.DataBlock;
 import com.paytm.pgplus.crypto.util.CryptoHash;
 import com.paytm.pgplus.crypto.util.HexToBinary;
 
+import static com.paytm.pgplus.crypto.constants.Config.GENESIS_DIFFICULTY;
+
 public class BlockActs {
    static public Block mine_block(Block last_block, DataBlock data){
      //    Mine a block based on the given last_block and data, until a block hash
@@ -42,11 +44,11 @@ public class BlockActs {
 //        //        Increase the difficulty for quickly mined blocks.
 //        //        Decrease the difficulty for slowly mined blocks.
 //        //        """
-       if(lastBlock2==null && GENESIS.GENESIS_DIFFICULTY-1>0){
-           return GENESIS.GENESIS_DIFFICULTY-1;
+       if(lastBlock2==null && GENESIS_DIFFICULTY-1>0){
+           return GENESIS_DIFFICULTY-1;
        }
        else if(lastBlock2==null && Config.MINE_RATE-1<=0){
-           return GENESIS.GENESIS_DIFFICULTY+1;
+           return GENESIS_DIFFICULTY+1;
        }
         if((newTimeStamp - lastBlock2.getTimeStamp()) < new Config().MINE_RATE){
             return lastBlock2.getDifficulty() + 1;
@@ -56,7 +58,7 @@ public class BlockActs {
         }
         return 1;
     }
-    public static boolean is_valid_block(Block last_block,Block block){
+    public static void is_valid_block(Block last_block,Block block){
 //   """
 //        Validate block by enforcing the following rules:
 //          - the block must have the proper last_hash reference
@@ -64,26 +66,21 @@ public class BlockActs {
 //          - the difficulty must only adjust by 1
 //          - the block hash must be a valid combination of the block fields
 //        """
-        boolean ans=true;
         if(!block.getLast_hash().equals(last_block.getHash())){
-            ans=false;
             new Throwable("last hash must be same");
         }
         if(!HexToBinary.hexToBinary(block.getHash()).substring(0,(int)block.getDifficulty()).equals(getStringOfNChars((int) block.getDifficulty(),'0'))){}
 
         if(Math.abs(last_block.getDifficulty()-block.getDifficulty())>1){
-            ans=false;
             new Throwable("difficulty diff must be one");
 
         }
 
-        String reconstructedHash=CryptoHash.hashString(block.getLast_hash()+block.getTimeStamp()+String.valueOf(block.getData())+block.getDifficulty()+block.getNonce());
+        String reconstructedHash=CryptoHash.hashString(block.getLast_hash()+block.getTimeStamp()+String.valueOf(block.getTransactions())+block.getDifficulty()+block.getNonce());
         if(!reconstructedHash.equals(block.getHash())){
-            ans=false;
             new Throwable("hash donot mathc");
 
         }
-        return ans;
     }
 
 

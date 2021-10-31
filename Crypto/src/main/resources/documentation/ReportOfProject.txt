@@ -41,3 +41,10 @@
   30.when one node creates a new transaction( or updates an existing one). The transaction will have to be broadcasted to the entire network and based on its transaction I.D. the transaction will either be added to each transaction pool if it's new( or it will be updated in each pool accordingly If a transaction with that I.D. already exists in it)
   41.ultimately the transaction pool is a necessary object because it enables miners to get an accurate list of recent transactions in order to include them within  a new block.
   42.when to add a new block to the block chain a miner will use the transactions within the transaction pool as the data for a new block to mine.
+  43.Once transactions are included within blocks in the block chain they become official . Which means that we can use those transactions to accurately calculate the balance of a wallet.
+  44.After all mining is expensive due to the proof of work requirement.
+  45.we should clear the transaction pool of any blockChain transactions after it new block is added to the blockChain.
+  46.Calculate wallet balance: A transaction have{input , output1, output2}---> 2nd output shows the final balance after Mywallet sending money.
+     so 2 cases :  case1: Mywallet sendM --then only  Receive : output2 of sendM + received Money
+                   case2: Mywallet sendM --then receive --sendM again : output2 of last sendM
+                   so there is imporatance of lastest transaction so Much

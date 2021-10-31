@@ -5,11 +5,14 @@ import com.google.gson.Gson;
 import com.paytm.pgplus.crypto.blockchain.Block;
 import com.paytm.pgplus.crypto.pubnub.pubnubApp;
 import com.paytm.pgplus.crypto.scripts.AverageBlockRate;
+import com.paytm.pgplus.crypto.util.GeneralUrils;
+import com.paytm.pgplus.crypto.util.JsonHelper;
 import com.paytm.pgplus.crypto.wallet.Transaction;
 import com.paytm.pgplus.crypto.blockchain.BlockChain;
 import com.paytm.pgplus.crypto.blockchain.DataBlock;
 import com.paytm.pgplus.crypto.util.CryptoHash;
 import com.paytm.pgplus.crypto.wallet.TransactionPool;
+import com.paytm.pgplus.crypto.wallet.TransactionPost;
 import com.paytm.pgplus.crypto.wallet.Wallet;
 import com.pubnub.api.PubNubException;
 import org.json.JSONException;
@@ -26,7 +29,9 @@ import java.security.NoSuchProviderException;
 import java.security.SignatureException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 @RestController()
 @RequestMapping("/")
@@ -49,6 +54,8 @@ public class CryptoController {
 
     @Autowired
     private Wallet wallet;
+    @Autowired
+    private Transaction transaction;
 
 //    @PostConstruct
 //    public void initialize() {
@@ -72,7 +79,7 @@ public class CryptoController {
 //
 //    }
 @EventListener(ApplicationReadyEvent.class)
-public void doSomethingAfterStartup() {
+public void doSomethingAfterStartup() throws NoSuchAlgorithmException, NoSuchProviderException {
         String port=env.getProperty("server.port");
         System.out.println("port is "+port);
         final String uri = "http://localhost:"+port+"/blockChain";
@@ -90,6 +97,13 @@ public void doSomethingAfterStartup() {
         catch (Exception e){
             System.out.println("chain replaced failure as incoiming chain is smaller");
         }
+        /////////////Wallet statUp
+
+transaction.setOutput(new HashMap<>());
+transaction.setInput(new HashMap<>());
+
+
+    /////////////
         }
 
 
@@ -136,8 +150,11 @@ public void doSomethingAfterStartup() {
 
     //Mine a Block add it to local BlockChain ...then broadcast both block and blockChain
     @GetMapping("/blockChain/mine")
-    public Block mine() throws JsonProcessingException, JSONException, PubNubException {
+    public Block mine() throws Exception {
         ArrayList<Transaction>list_tras=new ArrayList<>();
+        list_tras= transactionPool.transactionData();
+        list_tras.add(Transaction.rewardTransaction(wallet));
+
         blockChain.add_block(new DataBlock(list_tras));
 
         Block block=blockChain.getChain().get(blockChain.getChain().size()-1);
@@ -145,6 +162,7 @@ public void doSomethingAfterStartup() {
         pubnubApp pubnubApp=new pubnubApp(blockChain,transactionPool);
         //acting as Publisher
        pubnubApp.broadcast_block(block);
+       transactionPool.clearTransactionfromTransactionBasedonBlockChain(blockChain);
         return block;
     }
     @GetMapping("/syn")
@@ -172,20 +190,31 @@ public void doSomethingAfterStartup() {
 
     }
     @RequestMapping(value="/wallet/transaction/test", method = RequestMethod.POST)
-    public Transaction beach(@RequestBody(required = false) String recipent,  Integer amount) throws NoSuchAlgorithmException, SignatureException, InvalidKeyException, JSONException, JsonProcessingException, PubNubException, InvalidKeySpecException, NoSuchProviderException {
-Transaction transaction_data=new Transaction(wallet,"foo",12);
-        System.out.println("id "+transaction_data.getId());
-        System.out.println("amount"+transaction_data.getAmount());
-        System.out.println("output "+transaction_data.getOutput().toString());
-        System.out.println("inout "+transaction_data.getInput().toString());
-        System.out.println("wallet "+transaction_data.getSenderWallet().toString());
+    public Transaction beach(@RequestBody TransactionPost transactionPost) throws Exception {
+//
+String recipent=transactionPost.getRecipent();
+int amount=transactionPost.getAmount();
+        ///update or create new Transaction
+        Transaction transaction=transactionPool.existingTransaction(wallet.getAddress());
+        if(transaction!=null){
+            transaction.update(wallet,recipent,amount);
+        }else {
+            transaction=new Transaction(wallet,recipent,amount);
+        }
+        transactionPool.setTransaction(transaction);
 
         //just pubnub object few things do not change in it as @post used in pubnub
         pubnubApp pubnubApp=new pubnubApp(blockChain,transactionPool);
-        pubnubApp.broadcast_transaction(transaction_data);
-        return transaction_data;
+        pubnubApp.broadcast_transaction(transaction);
+        System.out.println("*********************************************************************************************************");
+        System.out.println("size of transaction pool "+transactionPool.getTransactionMap().size());
+        return transaction;
 
-       // return new Gson().toJson(transaction_data);
+        }
+        @GetMapping("/wallet/info")
+    public String wallet_info(){
+    return wallet.getAddress()+" "+wallet.getBalance();
+
         }
 
 

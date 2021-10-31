@@ -107,6 +107,7 @@ public class pubnubApp {
 
                     try {
                         blockChain.replace_chain(potential_chain);//this line might throw exception
+                        transactionPool.clearTransactionfromTransactionBasedonBlockChain(blockChain);
                         System.out.println("chain replaced success  size is "+blockChain.getChain().size());
 
                     }

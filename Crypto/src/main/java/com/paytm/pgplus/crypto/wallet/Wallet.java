@@ -5,8 +5,10 @@ import com.paytm.pgplus.crypto.constants.Config;
 import com.paytm.pgplus.crypto.blockchain.Block;
 import com.paytm.pgplus.crypto.blockchain.BlockChain;
 import lombok.Data;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
@@ -18,27 +20,34 @@ import java.util.UUID;
 import static com.paytm.pgplus.crypto.constants.Config.PRIVATESTRING_KEY;
 import static com.paytm.pgplus.crypto.constants.Config.PUBLICSTRING_KEY;
 
-@Component
+@Service
 @Data
 public class Wallet {
+
+    @Autowired
     private BlockChain blockChain;
-    private UUID address;
+    private String address;
     private String privateKey;
     private String publicKey;
     private int balance;
-
-
-    public Wallet() throws NoSuchAlgorithmException, NoSuchProviderException {
+    @PostConstruct
+    public void initialize() throws NoSuchAlgorithmException, NoSuchProviderException {
         KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance("DSA", "SUN");
-       //   SecureRandom random = SecureRandom.getInstance("DSA", "SUN");
+        //   SecureRandom random = SecureRandom.getInstance("DSA", "SUN");
         keyPairGen.initialize(1024);
-                //, random);
+        //, random);
         KeyPair keyPair = keyPairGen.generateKeyPair();
         privateKey=generatePrivateKey(keyPair);
         publicKey=generatePublicKey(keyPair);
-        balance=Config.STARTING_BALANCE;
-        address=UUID.randomUUID();
+        balance=calculateBalance(blockChain,address);
+                //Config.STARTING_BALANCE;
+        address=UUID.randomUUID().toString();
         System.out.println("walllet created atleast");
+    }
+
+
+    public Wallet() throws NoSuchAlgorithmException, NoSuchProviderException {
+
 
     }
 
@@ -104,15 +113,19 @@ public class Wallet {
         return bool;
     }
 
-    public int calculateBalance(BlockChain blockChain, UUID address){
+    public static int calculateBalance(BlockChain blockChain, String address){
         int balance = new Config().STARTING_BALANCE;
         if (blockChain == null) return balance;
         //int n = blockChain.getSize();
         int n = 4;
         for(Block block : blockChain.getChain()){
-            for(Transaction transaction : block.getData().getData()){
+            for(Transaction transaction : block.getTransactions().getTransactionArrayList()){
                 if(transaction.getInput().get("address") == address.toString()){
+                    //any time address conduct a new transaction it resets the balance
                     balance = transaction.getOutput().get(address);
+                }
+                else if(transaction.getOutput().containsKey(address)){
+                    balance+=transaction.getOutput().get(address);
                 }
             }
         }
