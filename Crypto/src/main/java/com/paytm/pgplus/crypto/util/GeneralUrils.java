@@ -17,5 +17,12 @@ public class GeneralUrils<K,V> {
         }
         return al;
     }
+    public static <K,V>ArrayList<K> mapToListKey(HashMap<K, V> hm){
+        ArrayList<K> al=new ArrayList<K>();
+        for (Map.Entry<K,V> entry : hm.entrySet()){
+            al.add(entry.getKey());
+        }
+        return al;
+    }
     //public E[] appendToArray(E[] array, E item){}
 }

@@ -14,6 +14,7 @@ import com.paytm.pgplus.crypto.util.CryptoHash;
 import com.paytm.pgplus.crypto.wallet.TransactionPool;
 import com.paytm.pgplus.crypto.wallet.TransactionPost;
 import com.paytm.pgplus.crypto.wallet.Wallet;
+import com.paytm.pgplus.crypto.walletRespooneinfo;
 import com.pubnub.api.PubNubException;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,11 +29,9 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SignatureException;
 import java.security.spec.InvalidKeySpecException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController()
 @RequestMapping("/")
 public class CryptoController {
@@ -211,11 +210,49 @@ int amount=transactionPost.getAmount();
         return transaction;
 
         }
+
         @GetMapping("/wallet/info")
-    public String wallet_info(){
-    return wallet.getAddress()+" "+wallet.getBalance();
+    public walletRespooneinfo wallet_info(){
+return new walletRespooneinfo(wallet.getAddress(),wallet.getBalance());
 
         }
+    @GetMapping("/transactions")
+    public ArrayList<Transaction> transactionslite(){
+   return transactionPool.transactionData();
 
+    }
+    @GetMapping("/known-addresses")
+    public  HashSet<String> transaddreess(){
+        HashSet<String>address=new HashSet<>();
+    for(Block block:blockChain.getChain()){
+        for(Transaction transaction :block.getTransactions().getTransactionArrayList()){
+            ArrayList<String>transactionAd=GeneralUrils.mapToListKey(transaction.getOutput());
+            for(String str:transactionAd){
+                address.add(str);
+            }
+        }
+    }
+    return address;
 
+    }
+
+    @GetMapping("/blockchain/length")
+    public int chainsize(){
+    return blockChain.getChain().size();
+    }
+
+    @GetMapping("/blockchain/range")
+    @ResponseBody
+    public ArrayList<Block> addFoo(@RequestParam(name = "start") Integer start, @RequestParam(name = "end") Integer end) {
+        if(start<=end){
+            if(end<blockChain.getChain().size()){
+                return (ArrayList<Block>) blockChain.getChain().subList(start,end);
+            }
+            else{
+                return blockChain.getChain();
+            }
+        }
+        return new ArrayList<>();
+
+    }
 }

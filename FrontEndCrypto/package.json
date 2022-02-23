@@ -1,0 +1,19 @@
+{
+  "name": "cd",
+  "version": "1.0.0",
+  "description": "![Course Logo](python_blockchain_logo.png)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/15Dkatz/python-blockchain-tutorial.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/15Dkatz/python-blockchain-tutorial/issues"
+  },
+  "homepage": "https://github.com/15Dkatz/python-blockchain-tutorial#readme"
+}
